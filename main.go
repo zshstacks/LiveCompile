@@ -1,5 +1,11 @@
 package main
 
+
+
 func main() {
-	watcher()
+
+	ch := make(chan string)
+
+	go watcher(ch)
+	debouncer(ch)
 }

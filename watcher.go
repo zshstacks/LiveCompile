@@ -9,7 +9,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-func watcher() {
+func watcher(ch chan string) {
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
@@ -40,7 +40,7 @@ func watcher() {
 		}
 		if event.Op&fsnotify.Write == fsnotify.Write {
 			log.Println("File changed: ", event.Name)
-			builder()
+			ch <- event.Name
 		}
 	}
 }
