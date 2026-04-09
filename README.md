@@ -71,5 +71,4 @@ LiveCompile -command="./myapp" -exclude=".git,vendor,tmp"
 - Handles `Ctrl+C` gracefully by cleaning up the child process before exiting
 
 ## License
-
-MIT
+[MIT](./LICENSE)
