@@ -1,9 +1,10 @@
 package main
 
 import (
-	"log"
 	"os"
 	"os/exec"
+
+	"github.com/fatih/color"
 )
 
 func builder() {
@@ -16,11 +17,11 @@ func builder() {
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		log.Println("Build failed: ", err)
+		color.Red("Build failed: %s", err)
 		return
 	}
 
-	log.Println("Build OK")
+	color.Green("Build OK")
 
 	if *flagCommand != "" {
 		runBinary(*flagCommand)
