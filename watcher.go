@@ -17,12 +17,13 @@ func watcher(ch chan string) {
 	defer w.Close()
 
 	//walk and add every dir to the watcher
-	filepath.WalkDir(".", func(s string, d fs.DirEntry, err error) error {
+	filepath.WalkDir(*flagDir, func(s string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if d.IsDir(){
+		if d.IsDir() {
+			log.Println("Watching dir:", s)
 			w.Add(s)
 		}
 
@@ -33,8 +34,8 @@ func watcher(ch chan string) {
 
 	//block and lister fore events
 	for event := range w.Events {
-	
-		//filter .go files 
+
+		//filter .go files
 		if !strings.HasSuffix(event.Name, ".go") {
 			continue
 		}
