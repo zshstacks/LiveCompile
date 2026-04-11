@@ -61,7 +61,7 @@ func watcher(ch chan string) {
 			continue
 		}
 
-		if event.Op&fsnotify.Write == fsnotify.Write {
+		if event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Rename == fsnotify.Rename {
 			color.Yellow("File changed: %s", event.Name)
 			ch <- event.Name
 		}
