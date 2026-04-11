@@ -40,6 +40,7 @@ LiveCompile -command="./myapp"
 | `-command` | `` | Command to run after a successful build |
 | `-exclude` | `.git,vendor` | Comma separated directories to exclude |
 | `-include` | `.go` | Comma separated file extensions to watch |
+| `-env` | `` | Comma separated env vars to pass to the binary e.g. `PORT=8080,ENV=dev` |
 
 ## Examples
 
@@ -63,11 +64,18 @@ Exclude additional directories:
 LiveCompile -command="./myapp" -exclude=".git,vendor,tmp"
 ```
 
+Pass environment variables to the binary:
+```bash
+LiveCompile -command="./myapp" -env="PORT=8080,ENV=production"
+```
+
 ## How it works
 
 - Watches all subdirectories recursively using [fsnotify](https://github.com/fsnotify/fsnotify)
 - Debounces file change events so rapid saves only trigger one build
+- Displays build duration after each successful build
 - Kills the running binary before starting the new one
+- Passes custom environment variables to the child process
 - Handles `Ctrl+C` gracefully by cleaning up the child process before exiting
 
 ## License
