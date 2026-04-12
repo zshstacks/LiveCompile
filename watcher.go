@@ -5,12 +5,13 @@ import (
 	"log"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/fatih/color"
 	"github.com/fsnotify/fsnotify"
 )
 
-func watcher(ch chan string) {
+func fsnotifyWatcher(ch chan string) {
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
@@ -65,5 +66,71 @@ func watcher(ch chan string) {
 			color.Yellow("File changed: %s", event.Name)
 			ch <- event.Name
 		}
+	}
+}
+
+func pollingWatcher(ch chan string) {
+
+	lastModified := make(map[string]time.Time)
+	excludedDir := strings.Split(*flagExclude, ",")
+	includedExts := strings.Split(*flagInclude, ",")
+
+	color.Cyan("Watching for changes (polling)...")
+
+	for {
+		filepath.WalkDir(*flagDir, func(s string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+
+			//skipping dirs
+			if d.IsDir() {
+				return nil
+			}
+
+			//check excluded
+			for _, dir := range excludedDir {
+				if strings.Contains(s, dir) {
+					return nil
+				}
+			}
+
+			//check included
+			matched := false
+			for _, ext := range includedExts {
+				if strings.HasSuffix(s, ext) {
+					matched = true
+					break
+				}
+			}
+			if !matched {
+				return nil
+			}
+
+			//check mod time
+			info, err := d.Info()
+			if err != nil {
+				return err
+			}
+			if lastModified[s] != info.ModTime() {
+				if !lastModified[s].IsZero() {
+					color.Yellow("File changed: %s", s)
+					ch <- s
+				}
+				lastModified[s] = info.ModTime()
+			}
+
+			return nil
+		})
+		time.Sleep(time.Duration(*flagPollInterval) * time.Millisecond)
+	}
+
+}
+
+func watcher(ch chan string) {
+	if *flagPoll {
+		pollingWatcher(ch)
+	} else {
+		fsnotifyWatcher(ch)
 	}
 }
