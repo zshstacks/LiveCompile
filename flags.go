@@ -10,4 +10,5 @@ var (
 	flagExclude  = flag.String("exclude", ".git,vendor", "comma separated directories to exclude")
 	flagInclude  = flag.String("include", ".go", "comma separated file extensions to watch e.g. .go,.env,.yaml")
 	flagEnv      = flag.String("env", "", "comma separated env vars e.g. PORT=8080,ENV=dev")
+	flagDelay    = flag.Int("delay", 300, "debounce delay in milliseconds")
 )

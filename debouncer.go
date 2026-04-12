@@ -8,9 +8,9 @@ func debouncer(ch chan string) {
 
 	for range ch {
 		if timer == nil {
-			timer = time.AfterFunc(300 * time.Millisecond, builder)
+			timer = time.AfterFunc(time.Duration(*flagDelay)*time.Millisecond, builder)
 		} else {
-				timer.Reset(300 * time.Millisecond)
+			timer.Reset(time.Duration(*flagDelay) * time.Millisecond)
 		}
 	}
 }
