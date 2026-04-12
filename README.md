@@ -41,6 +41,9 @@ LiveCompile -command="./myapp"
 | `-exclude` | `.git,vendor` | Comma separated directories to exclude |
 | `-include` | `.go` | Comma separated file extensions to watch |
 | `-env` | `` | Comma separated env vars to pass to the binary e.g. `PORT=8080,ENV=dev` |
+| `-delay` | `300` | Debounce delay in milliseconds |
+| `-polling` | `false` | Use polling instead of fsnotify (useful for Docker, WSL, network drives) |
+| `-poll-interval` | `500` | Polling interval in milliseconds |
 
 ## Examples
 
@@ -69,6 +72,16 @@ Pass environment variables to the binary:
 LiveCompile -command="./myapp" -env="PORT=8080,ENV=production"
 ```
 
+Use polling mode (Docker, WSL, network drives):
+```bash
+LiveCompile -polling -command="./myapp"
+```
+
+Use a custom debounce delay:
+```bash
+LiveCompile -delay=500 -command="./myapp"
+```
+
 ## How it works
 
 - Watches all subdirectories recursively using [fsnotify](https://github.com/fsnotify/fsnotify)
@@ -76,7 +89,9 @@ LiveCompile -command="./myapp" -env="PORT=8080,ENV=production"
 - Displays build duration after each successful build
 - Kills the running binary before starting the new one
 - Passes custom environment variables to the child process
+- Supports polling mode for Docker, WSL, and network drive compatibility
 - Handles `Ctrl+C` gracefully by cleaning up the child process before exiting
 
 ## License
 [BSD-2-Clause license](./LICENSE)
+
